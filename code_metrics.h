@@ -22,11 +22,11 @@ public:
     // public functions
     int getLineCount(QString filename);
     int getLineCountFiles(const QStringList *file_list);
-    int getDirList(const QString path, QStringList *output_list);
+    int getDirList(const QString path, QStringList *dir_list);
     int getDirList(const QString path, QStringList dir_filters, QStringList *dir_list);
     int getFileList(const QString path, QStringList *file_list);
     int getFileList(const QString path, QStringList file_filters, QStringList *file_list);
-    int getFileList(const QString path, QStringList dir_filters, QStringList file_filters, QStringList *file_list);
+    int getFileList(const QString path, QStringList file_filters, QStringList *dir_list_filtered, QStringList *file_list);
 
     // Static functions that act as utility functions freely used without object
     static void printStringList( QStringList *string_list);

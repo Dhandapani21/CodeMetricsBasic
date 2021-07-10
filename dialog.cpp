@@ -138,13 +138,27 @@ void Dialog::displayScanList()
 
 void Dialog::scanFiles()
 {
-    // Get Directory List
-    m_codeMetrics->m_dirCount = m_codeMetrics->getDirList(m_codeMetrics->m_srcPath, m_codeMetrics->m_dirFilters, m_codeMetrics->m_dirList);
-    qDebug() << "Total Directory count is " << m_codeMetrics->m_dirCount;
 
-    // Get the list of Files from ALL Directories
-    m_codeMetrics->m_fileCount = m_codeMetrics->getFileList(m_codeMetrics->m_srcPath, m_codeMetrics->m_fileFilters, m_codeMetrics->m_fileList);
-    qDebug() << "Total File count is " << m_codeMetrics->m_fileCount;
+    if(m_codeMetrics->m_skipDirectoryEnable == 1)
+    {
+        // Get Filtered Dir list
+        m_codeMetrics->m_dirCount  = m_codeMetrics->getDirList(m_codeMetrics->m_srcPath, m_codeMetrics->m_dirFilters, m_codeMetrics->m_dirList);
+        qDebug() << "Filtered Dir count is " << m_codeMetrics->m_dirCount;
+
+        // Get list of Directories after applying the skip dir filters and then get the files
+        m_codeMetrics->m_fileCount = m_codeMetrics->getFileList(m_codeMetrics->m_srcPath, m_codeMetrics->m_fileFilters, m_codeMetrics->m_dirList, m_codeMetrics->m_fileList);
+        qDebug() << "Total File count is " << m_codeMetrics->m_fileCount;
+    }
+    else
+    {
+        // Get Directory List
+        m_codeMetrics->m_dirCount = m_codeMetrics->getDirList(m_codeMetrics->m_srcPath, m_codeMetrics->m_dirList);
+        qDebug() << "Total Directory count is " << m_codeMetrics->m_dirCount;
+
+        // Get the list of Files from ALL Directories
+        m_codeMetrics->m_fileCount = m_codeMetrics->getFileList(m_codeMetrics->m_srcPath, m_codeMetrics->m_fileFilters, m_codeMetrics->m_fileList);
+        qDebug() << "Total File count is " << m_codeMetrics->m_fileCount;
+    }
 }
 
 // --------------------------------------------
@@ -154,9 +168,7 @@ void Dialog::scanFiles()
 void Dialog::on_pb_browsePath_clicked()
 {
     QString dir;
-    dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                 "C:/",
-                                                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "C:/", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(dir.isEmpty() == false)
     {
         m_codeMetrics->m_srcPath  = dir;

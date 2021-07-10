@@ -255,50 +255,39 @@ int CodeMetrics::getLineCountFiles(const QStringList *file_list)
 int CodeMetrics::getDirList(const QString path, QStringList *dir_list)
 {
     int dir_count=0;
-    QString current_dir;
+    QString current_dir,start_dir;
 
     if(path.isEmpty()) return 0;
 
+    // Iterate the directories and get the list of directories
     QDirIterator dir_itr(path, QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-    current_dir =dir_itr.path();    // starting dir is not needed to be listed/counted
+    start_dir = dir_itr.path();
+    qDebug() << "start dir is " << start_dir;
 
     while (dir_itr.hasNext())
     {
+        current_dir = dir_itr.next();
         dir_list->append(current_dir);
         dir_count++;
     }
-    return  dir_count;
+    return dir_count;
 }
 
 // Method to traverse ALL dirs, delete the unwanted dirs and report the FILTERED dirs
 int CodeMetrics::getDirList(const QString path, QStringList dir_filters, QStringList *dir_list)
 {
     int dir_count=0, result=0;
-    QString current_dir,first_dir,start_dir;
+    QString current_dir,start_dir;
 
     if(path.isEmpty()) return 0;
     qDebug() << "dir_filters are" ;
     printStringList(&dir_filters);
 
-    // Iterate the directories, delete the unwanted and get the filtered Dirs only
+    // Iterate the directories and get the filtered Dirs only after skipping the directories in dir_filters
     QDirIterator dir_itr(path, QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     start_dir = dir_itr.path();
     qDebug() << "start dir is " << start_dir;
     //qDebug() << "dir name is " << QDir::currentPath().toLatin1().data();  // this shows the project build path
-
-    // process first dir separately
-/*
-    first_dir = dir_itr.next();
-    qDebug() << "first dir is " << first_dir;
-    result = check_skip_directories(first_dir, dir_filters);
-    if(result == 1)
-    {
-        dir_list->append(first_dir);
-        dir_count++;
-        qDebug() << "dir count " << dir_count;
-        print_str_list(dir_list);
-    }
-*/
 
     while (dir_itr.hasNext())
     {
@@ -350,20 +339,15 @@ int CodeMetrics::getFileList(const QString path, QStringList file_filters, QStri
 }
 
 // with Directories filter support - skip unwanted directories
-int CodeMetrics::getFileList(const QString path, QStringList dir_filters, QStringList file_filters, QStringList *file_list)
+int CodeMetrics::getFileList(const QString path, QStringList file_filters, QStringList *dir_list_filtered, QStringList *file_list)
 {
-    int file_count=0, dir_count=0;
-    QStringList *dir_list_filtered = new (QStringList);
+    int file_count=0;
     QString current_dir;
 
     if(path.isEmpty()) return 0;
 
-    // Get Filtered Dir list
-    dir_count = getDirList(path, dir_filters, dir_list_filtered);
-    qDebug() << "Filtered Dir count is " << dir_count;
-
     // traverse through the directory list and fetch the file list
-    for(int j=0;j<dir_count;j++)
+    for(int j=0;j<dir_list_filtered->count();j++)
     {
         QDirIterator file_itr(dir_list_filtered->at(j), file_filters, QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags); // Not browsing sub-dirs here
         while (file_itr.hasNext())
