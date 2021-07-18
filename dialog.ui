@@ -37,9 +37,9 @@
   <widget class="QPushButton" name="pb_generateReport">
    <property name="geometry">
     <rect>
-     <x>620</x>
-     <y>550</y>
-     <width>151</width>
+     <x>570</x>
+     <y>540</y>
+     <width>171</width>
      <height>41</height>
     </rect>
    </property>
@@ -289,9 +289,9 @@
   <widget class="QTextBrowser" name="tb_report">
    <property name="geometry">
     <rect>
-     <x>545</x>
+     <x>540</x>
      <y>301</y>
-     <width>231</width>
+     <width>241</width>
      <height>231</height>
     </rect>
    </property>
@@ -302,12 +302,12 @@
     </font>
    </property>
   </widget>
-  <widget class="QPushButton" name="pb_modAndUpdate">
+  <widget class="QPushButton" name="pb_updateReport">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>550</y>
-     <width>161</width>
+     <x>370</x>
+     <y>540</y>
+     <width>151</width>
      <height>41</height>
     </rect>
    </property>
@@ -320,7 +320,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Modify and Update</string>
+    <string>Update Report</string>
    </property>
    <property name="autoDefault">
     <bool>true</bool>
@@ -340,7 +340,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>550</y>
+     <y>540</y>
      <width>161</width>
      <height>41</height>
     </rect>
@@ -360,6 +360,30 @@
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="QPushButton" name="pb_clearAllList">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>540</y>
+     <width>161</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Candara</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Clear All List</string>
+   </property>
+   <property name="autoDefault">
+    <bool>true</bool>
+   </property>
+  </widget>
   <zorder>groupBox</zorder>
   <zorder>groupBox_2</zorder>
   <zorder>label</zorder>
@@ -367,9 +391,10 @@
   <zorder>ple_scanResult</zorder>
   <zorder>label_4</zorder>
   <zorder>tb_report</zorder>
-  <zorder>pb_modAndUpdate</zorder>
+  <zorder>pb_updateReport</zorder>
   <zorder>cbox_scanResult</zorder>
   <zorder>pb_scanFiles</zorder>
+  <zorder>pb_clearAllList</zorder>
  </widget>
  <resources/>
  <connections/>
