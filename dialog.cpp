@@ -82,16 +82,48 @@ void Dialog::on_cb_skipDirEnable_stateChanged(int arg1)
     }
 }
 
-void Dialog::on_ple_scanResult_textChanged()
+void Dialog::scanResult_textChanged()
 {
- qDebug() << "text changed";
+    qDebug() << "Scan List is changed";
+
+
+    if(this->m_scanListSelection == Dialog::SCAN_LIST_DIRECTORIES)
+    {
+        // Update Dir list and count
+        QString plainTextEditContents = ui->ple_scanResult->toPlainText();
+        QStringList lines = plainTextEditContents.split("\n");
+        lines.removeAll(QString("")); // Returns the number of entries removed
+
+        *m_codeMetrics->m_dirList = lines;
+        m_codeMetrics->m_dirCount = m_codeMetrics->m_dirList->count();
+        qDebug() << "Total Dir count is " << m_codeMetrics->m_dirCount;
+        //CodeMetrics::printStringList(m_codeMetrics->m_dirList);
+
+        // update file count
+        m_codeMetrics->m_fileCount = m_codeMetrics->getFileList(m_codeMetrics->m_srcPath, m_codeMetrics->m_fileFilters, m_codeMetrics->m_dirList, m_codeMetrics->m_fileList);
+        qDebug() << "Total File count is " << m_codeMetrics->m_fileCount;
+
+    }
+    else if (this->m_scanListSelection == Dialog::SCAN_LIST_FILES)
+    {
+        // Update File List and count
+        QString plainTextEditContents = ui->ple_scanResult->toPlainText();
+        QStringList lines = plainTextEditContents.split("\n");
+        lines.removeAll(QString("")); // Returns the number of entries removed
+
+        *m_codeMetrics->m_fileList = lines;
+        m_codeMetrics->m_fileCount = m_codeMetrics->m_fileList->count();
+    }
+    else if (this->m_scanListSelection == Dialog::SCAN_LIST_CLASSES)
+    {
+        // TODO
+    }
+    else
+    {
+        // Nothing is selected
+    }
 }
 
-// scan type selection with string
-void Dialog::on_cbox_scanResult_activated(const QString &arg1)
-{
-   //qDebug() << "activated string" << arg1;
-}
 
 // scan type selection with index
 void Dialog::on_cbox_scanResult_activated(int index)
@@ -100,6 +132,7 @@ void Dialog::on_cbox_scanResult_activated(int index)
     this->displayScanList();
     qDebug() << "activated Scan Type" << m_scanListSelection;
 }
+
 
 void Dialog::clearScanList()
 {
@@ -161,6 +194,25 @@ void Dialog::scanFiles()
     }
 }
 
+void Dialog::processFiles()
+{
+    // Count the number of Lines
+    m_codeMetrics->m_lineCount = m_codeMetrics->getLineCountFiles(m_codeMetrics->m_fileList);
+}
+
+void Dialog::prepareReport()
+{
+    // print results
+    QTextCharFormat format;
+    format.setFontWeight(QFont::ExtraBold);
+    ui->tb_report->textCursor().mergeCharFormat(format);
+    ui->tb_report->setTextColor(0x8000ff);
+    ui->tb_report->append("Total Directories: \t" + QString::number(m_codeMetrics->m_dirCount));
+    ui->tb_report->append("Total Files: \t\t" + QString::number(m_codeMetrics->m_fileCount));
+    ui->tb_report->append("Total Lines: \t\t" + QString::number(m_codeMetrics->m_lineCount));
+    qDebug() << "Total files is " << m_codeMetrics->m_fileCount << "Lines count is " << m_codeMetrics->m_lineCount;
+}
+
 // --------------------------------------------
 // Push button Handles
 // --------------------------------------------
@@ -178,12 +230,37 @@ void Dialog::on_pb_browsePath_clicked()
 
 void Dialog::on_pb_scanFiles_clicked()
 {
+    // clear previous values
+    m_codeMetrics->m_fileList->clear();
+    m_codeMetrics->m_dirList->clear();
+    this->clearScanList();
 
+    // Update the scan list
+    this->scanFiles();
+    this->displayScanList();
+}
+void Dialog::on_pb_updateReport_clicked()
+{
+    // clear previous values
+    m_codeMetrics->m_fileList->clear();
+    m_codeMetrics->m_dirList->clear();
+
+    // Update list based on the new scan list edited by user
+    this->scanResult_textChanged();
+
+    // update report based on edited Scan Results edit window
+    ui->tb_report->clear();
+    this->processFiles();
+    this->prepareReport();
 }
 
-void Dialog::on_pb_modAndUpdate_clicked()
+void Dialog::on_pb_clearAllList_clicked()
 {
+    this->clearScanList();
 
+    m_codeMetrics->m_dirList->clear();
+    m_codeMetrics->m_fileList->clear();
+    // todo - clear classes list
 }
 
 void Dialog::on_pb_generateReport_clicked()
@@ -194,28 +271,15 @@ void Dialog::on_pb_generateReport_clicked()
     ui->ple_scanResult->clear();
     ui->tb_report->clear();
 
-    if(m_codeMetrics->m_skipDirectoryEnable == 1)
-    {
-    }
+    // scan the files and display on scan list
+    this->scanFiles();
+    this->displayScanList();
 
-    // scan the files
-    scanFiles();
-
-    // display the scanned files
-    displayScanList();
-
-    // Count the number of Lines
-    m_codeMetrics->m_lineCount = m_codeMetrics->getLineCountFiles(m_codeMetrics->m_fileList);
-
-    // print results
-    QTextCharFormat format;
-    format.setFontWeight(QFont::ExtraBold);
-    ui->tb_report->textCursor().mergeCharFormat(format);
-    ui->tb_report->setTextColor(0x8000ff);
-    ui->tb_report->append("Total Directories: \t" + QString::number(m_codeMetrics->m_dirCount));
-    ui->tb_report->append("Total Files: \t\t" + QString::number(m_codeMetrics->m_fileCount));
-    ui->tb_report->append("Total Lines: \t\t" + QString::number(m_codeMetrics->m_lineCount));
-    qDebug() << "Total files is " << m_codeMetrics->m_fileCount << "Lines count is " << m_codeMetrics->m_lineCount;
+    // Process files and display Report
+    this->processFiles();
+    this->prepareReport();
 }
+
+
 
 

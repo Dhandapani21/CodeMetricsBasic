@@ -35,19 +35,22 @@ public:
     void scanFiles();
     void displayScanList();
     void clearScanList();
+    void processFiles();
+    void prepareReport();
+    void scanResult_textChanged();
 
 private slots:
     void on_le_srcPath_editingFinished();
     void on_le_fileFilters_editingFinished();
     void on_le_dirFilters_editingFinished();
     void on_cb_skipDirEnable_stateChanged(int arg1);
-    void on_ple_scanResult_textChanged();
     void on_pb_generateReport_clicked();
-    void on_pb_modAndUpdate_clicked();
-    void on_cbox_scanResult_activated(const QString &arg1);
+//    void on_cbox_scanResult_activated(const QString &arg1);
     void on_cbox_scanResult_activated(int index);
     void on_pb_scanFiles_clicked();
     void on_pb_browsePath_clicked();
+    void on_pb_updateReport_clicked();
+    void on_pb_clearAllList_clicked();
 
 private:
     Ui::Dialog *ui;
